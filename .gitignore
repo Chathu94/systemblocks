@@ -1,0 +1,8 @@
+# IDE
+.idea
+
+# Compiled binary
+dist
+
+# Dependency directory
+node_modules
