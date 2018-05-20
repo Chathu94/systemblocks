@@ -8,14 +8,11 @@ export default class LoginController extends Blocks.Controller {
     password: Joi.string().required()
   };
 
-  method = "POST";
-
   constructor(req, res) {
-    super(req, res, "auth");
-
+    super({ params: req.params, body: req.body, application: "auth", method: "POST" });
   }
 
   response() {
-    this.setData({ a: 'b' });
+    this.setResponse({ a: 'b' });
   }
 }
