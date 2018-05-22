@@ -1,6 +1,6 @@
 {
   "name": "systemblocks",
-  "version": "1.0.0",
+  "version": "0.0.20",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,8 +8,12 @@
     "dev": "DEBUG=SB:* gulp dev",
     "clean": "gulp clean"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Chathu94/systemblocks.git"
+  },
   "author": "Hashan Chathuranga",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "debug": "^3.1.0",
     "express": "^4.16.3",
