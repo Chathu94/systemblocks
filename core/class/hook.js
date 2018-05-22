@@ -2,7 +2,6 @@ require("babel-core/register");
 require("babel-polyfill");
 import fs from 'fs';
 import * as Blocks from './';
-import { Logger } from "./index";
 
 export default class Hook {
 
@@ -33,25 +32,21 @@ export default class Hook {
       return p.then(async () => {
         const r = hook.onEvent(datas);
         if (r instanceof Promise) {
-          const r2 = await r;
-          datas = (typeof r2 !== "undefined") ? r2 : datas;
-        } else if (typeof r !== 'undefined') {
+          let r2 = null;
+          try {
+            r2 = await Promise.race([r, new Promise((resolve, reject) => setTimeout(reject(new Error(`Hook '${hook.constructor.name}' maximum exec time exceed.`)), _block.config.HOOK_PROMISE))]);
+          } catch (e) {
+            Blocks.Logger.Error({ type: 'hook', module: hook.constructor.name, error: e });
+          }
+          datas = (typeof r2 !== "undefined" && r2 !== null) ? r2 : datas;
+        } else if (typeof r !== 'undefined' && r !== null) {
           datas = r;
         }
-        console.log('hook', hook.constructor.name, datas);
       });
     }, Promise.resolve());
   }
 
   setPriorityLevel(p) {
     this.priorityLevel = p;
-  }
-
-  handleHook() {
-    try {
-      throw new Error('test');
-    } catch (e) {
-      return new Blocks.SBError(e);
-    }
   }
 }

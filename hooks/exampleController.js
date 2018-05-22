@@ -13,10 +13,9 @@ export default class afterLoginHook extends Blocks.Hook {
 
 
   onEvent({ params, body, method }) {
-    console.log(params, body, method);
-    // return new Promise(resolve => {
-    //   setTimeout(resolve({ params: { test: 'awdawd' }, body, method }), 3000);
-    // });
-    return { params: { test: 'awdawdd awd lawd l' }, body, method };
+    // console.log(params, body, method);
+    return new Promise((resolve) => {
+      resolve({ params, body, method });
+    });
   }
 }

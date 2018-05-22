@@ -31,7 +31,7 @@ export default class Logger {
       fs.mkdirSync(logs);
     }
     if (!fs.existsSync(logs)) {
-      fs.writeFileSync(file, '', 'utf8');
+      fs.writeFileSync(file, 'LOG SYSTEM BLOCKS\n_________________\n\n', 'utf8');
     }
     Logger.logFile = file;
   }
