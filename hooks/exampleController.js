@@ -5,6 +5,7 @@ export default class afterLoginHook extends Blocks.Hook {
   static application = "auth";
   static type = "Controller";
   static event = "before";
+  static className = "login";
 
   constructor() {
     super();

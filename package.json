@@ -16,6 +16,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "debug": "^3.1.0",
+    "dot-mysql": "0.0.24",
     "express": "^4.16.3",
     "joi": "^13.3.0"
   },

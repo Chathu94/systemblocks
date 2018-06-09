@@ -14,18 +14,13 @@ export default class Controller {
   }
 
   async beforeResponseHandler() {
-    if (this.beforeResponse === "function") {
-      await this.beforeResponse();
-    }
     const { params, body, method } = this;
-    await Blocks.Hook.executeHooks({ event: "before", type: Object.getPrototypeOf(this.constructor).name, application: this.application }, { params, body, method });
+    return await Blocks.Hook.executeHooks({ event: "before", type: Object.getPrototypeOf(this.constructor).name, application: this.application, className: this.constructor.name }, { params, body, method });
   }
 
   async afterResponseHandler() {
-    if (this.afterResponse === "function") {
-      await this.afterResponse();
-    }
-    await Blocks.Hook.executeHooks({ event: "after", type: Object.getPrototypeOf(this.constructor).name, application: this.application }, this.output);
+    const { params, body, method } = this;
+    return await Blocks.Hook.executeHooks({ event: "after", type: Object.getPrototypeOf(this.constructor).name, application: this.application, className: this.constructor.name }, { params, body, method, output: this.output });
   }
 
   getParameters() {
@@ -50,7 +45,10 @@ export default class Controller {
   }
 
   async sendResponse() {
-    await this.beforeResponseHandler();
+    const { params, body, method } = await this.beforeResponseHandler();
+    this.params = params;
+    this.body = body;
+    this.method = method;
     if (!this.response) {
       throw new SBError('Controller must have response function.');
     }
@@ -58,6 +56,7 @@ export default class Controller {
       throw new SBError('this.response must be a function.');
     }
     this.response();
-    await this.afterResponseHandler();
+    const { output } = await this.afterResponseHandler();
+    this.output = output;
   }
 }

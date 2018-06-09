@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import * as Blocks from '../../../core/class';
+import SystemUser from '../modals/systemuser';
 
 export default class LoginController extends Blocks.Controller {
 
@@ -14,5 +15,6 @@ export default class LoginController extends Blocks.Controller {
 
   response() {
     this.setResponse({ a: 'b' });
+    const a = new SystemUser();
   }
 }

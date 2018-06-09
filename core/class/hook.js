@@ -2,6 +2,7 @@ require("babel-core/register");
 require("babel-polyfill");
 import fs from 'fs';
 import * as Blocks from './';
+const debug = require('debug')('SB: Hook');
 
 export default class Hook {
 
@@ -15,16 +16,19 @@ export default class Hook {
       fs.readdir('./hooks', (err, files) => {
         if (err) return reject(err);
         files.forEach(file => {
-          const Hook = require(`../../hooks/${file}`);
-          hooks.push(Hook);
+          if (file.substr(-3) === '.js') {
+            const Hook = require(`../../hooks/${file}`);
+            hooks.push(Hook);
+          }
         });
         resolve(hooks);
       });
     });
   }
 
-  static async executeHooks({ application, type, event }, data) {
-    const hooks = _block.hooks.filter(h => h.application === application && h.type === type && h.event === event);
+  static async executeHooks({ application, type, event, className }, data) {
+    debug(`Executing hooks for type: ${type}, app: ${application}, event: ${event}, className: ${className}`);
+    const hooks = _block.hooks.filter(h => h.application === application && h.type === type && h.event === event && h.className === className);
     const generated = hooks.map(h => new h(data));
     const sorted = generated.sort((g1, g2) => g2.priorityLevel - g1.priorityLevel);
     let datas = data || {};
