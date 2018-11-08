@@ -1,6 +1,6 @@
 import Joi from "joi";
-import * as Blocks from "../../../core/class";
-import { Method } from "../../../core/decorator";
+import * as Blocks from "systemblocks/core/class";
+import { Method } from "systemblocks/core/decorator";
 
 export default class LoginController extends Blocks.Controller {
   constructor() {
@@ -15,22 +15,19 @@ export default class LoginController extends Blocks.Controller {
       password: Joi.string().required()
     }
   })
-  async returnLogins(req, res) {
+  async save(req, res) {
     const { name, username, password } = req.body;
     const saved = await new _block.modals.auth.User({
       name, username, password
-    }).saveA();
+    }).save();
     res.json(new Blocks.Output(saved));
   }
 
   @Method({
-    method: "POST",
-    parameters: {
-      username: Joi.string().required(),
-      password: Joi.string().required()
-    }
+    method: "GET"
   })
-  returnLoginsx(req, res) {
-    res.json(new Blocks.Output({ a: 'B' }));
+  async list(req, res) {
+    const users = await _block.modals.auth.User.find({});
+    res.json(new Blocks.Output(users));
   }
 }

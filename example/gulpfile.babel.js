@@ -6,7 +6,7 @@ import runSequence from 'run-sequence';
 import babelCompiler from 'babel-core/register';
 
 const paths = {
-  js: ['./**/*.js', '!dist/**', '!node_modules/**', 'config.js'],
+  js: ['./**/*.js', '!dist/**', '!node_modules/**'],
   nonJs: ['./package.json', './.gitignore'],
 };
 
