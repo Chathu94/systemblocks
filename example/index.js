@@ -1,2 +1,2 @@
-const systemblocks = require("systemblocks/core/class");
+const systemblocks = require("../core/class");
 systemblocks.Init();

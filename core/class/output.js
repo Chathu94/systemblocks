@@ -1,9 +1,8 @@
-import Message from "../vars/message";
 import * as Blocks from "./";
 
 export default class Output {
   success = false;
-  message = Message.API_NOT_FOUND;
+  message = "API not found.";
   data = undefined;
   status = 404;
 
@@ -25,7 +24,7 @@ export default class Output {
     ) {
       const {
         success = true,
-        message = Message.REQ_SUCCESS,
+        message = "Request completed successfully.",
         data = {},
         status = 200
       } = datas;
@@ -41,7 +40,7 @@ export default class Output {
       ).length > 0
     ) {
       this.success = true;
-      this.message = Message.REQ_SUCCESS;
+      this.message = "Request completed successfully.";
       this.status = 200;
       this.data = datas;
     }
@@ -69,14 +68,14 @@ export default class Output {
 
   setError(error) {
     this.success = false;
-    this.message = Message.HANDLED_ERR;
+    this.message = error.message;
     this.status = 500;
-    this.data = error.message;
+    this.data = error.stack;
   }
 
   setReqSuccess(data) {
     this.success = true;
-    this.message = Message.REQ_SUCCESS;
+    this.message = "Request completed successfully.";
     this.status = 200;
     this.data = data;
   }

@@ -13,9 +13,9 @@ export default async () => {
   debug('Loading configs');
   global._block.config = require(`${path.dirname(require.main.filename)}/config/index.js`);
   // Load hooks
-  debug('Loading hooks');
-  global._block.hooks = await Blocks.Hook.loadHooks();
-  info(`Loaded ${global._block.hooks.length} hooks`);
+  // debug('Loading hooks');
+  // global._block.hooks = await Blocks.Hook.loadHooks();
+  // info(`Loaded ${global._block.hooks.length} hooks`);
   // Load routes
   debug('Loading routes');
   global._block.routes = await Blocks.Controller.loadRoutes();

@@ -7,7 +7,7 @@ import babelCompiler from 'babel-core/register';
 
 const paths = {
   js: ['./**/*.js', '!dist/**', '!node_modules/**', 'config.js'],
-  nonJs: ['./package.json', './.gitignore'],
+  nonJs: ['./package.json', './.gitignore', './README.md'],
 };
 
 const plugins = gulpLoadPlugins();
@@ -36,7 +36,7 @@ gulp.task('babel', () =>
 
 gulp.task('nodemon', ['copy', 'babel'], () =>
   plugins.nodemon({
-    script: path.join('dist', 'index.js'),
+    script: path.join('dist', 'example', 'index.js'),
     ext: 'js',
     ignore: ['node_modules/**/*.js', 'dist/**/*.js'],
     tasks: ['clean', 'copy', 'babel']

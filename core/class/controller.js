@@ -1,14 +1,25 @@
+import mongoose from "mongoose";
+
 require("babel-core/register");
 require("babel-polyfill");
 import fs from "fs";
 import path from "path";
+import jwt from 'jsonwebtoken';
 import express from "express";
 import validate from 'express-validation';
 import bodyParser from 'body-parser';
+import passport from 'passport';
+import passportJWT from 'passport-jwt';
 import * as Blocks from "../class";
 const debug = require('debug')('SB: Controller');
+const jwtStrategy = passportJWT.Strategy;
 
 export default class Controller {
+  static generateToken(data) {
+    const { validate, jwtFromRequest, secretOrKey, ...opts } = global._block.config.passport;
+    return jwt.sign(data, global._block.config.passport.secretOrKey, opts);
+  }
+
   static async loadRoutes() {
     const readFiles = folder =>
       new Promise((resolve, reject) => {
@@ -50,6 +61,13 @@ export default class Controller {
     const app = express();
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
+
+    if (global._block.config.passport && typeof global._block.config.passport === "object") {
+      debug('Config passport');
+      const { validate, ...opts } = global._block.config.passport;
+      passport.use(new jwtStrategy(opts, validate));
+    }
+
     const router = express.Router();
     app.use("/", router);
 
@@ -63,23 +81,23 @@ export default class Controller {
           if (!!p.then) p.catch((error) => next(error));
         };
         reqs = reqs.map(req => {
-          switch(req.method.toUpperCase()) {
-            case 'GET':
-            default:
-              return router.route(`/${app.app}/${r.name}`).get(handlerException(req.originalMethod));
-            case 'POST':
-              if (req.parameters) return router.route(`/${app.app}/${r.name}`).post(validate(req.parameters), handlerException(req.originalMethod));
-              return router.route(`/${app.app}/${r.name}`).post(handlerException(req.originalMethod));
-            case 'PUT':
-              if (req.parameters) return router.route(`/${app.app}/${r.name}`).put(validate(req.parameters), handlerException(req.originalMethod));
-              return router.route(`/${app.app}/${r.name}`).put(handlerException(req.originalMethod));
-            case 'DELETE':
-              if (req.parameters) return router.route(`/${app.app}/${r.name}`).delete(validate(req.parameters), handlerException(req.originalMethod));
-              return router.route(`/${app.app}/${r.name}`).delete(handlerException(req.originalMethod));
-            case 'PATCH':
-              if (req.parameters) return router.route(`/${app.app}/${r.name}`).patch(validate(req.parameters), handlerException(req.originalMethod));
-              return router.route(`/${app.app}/${r.name}`).patch(handlerException(req.originalMethod));
+          const args = [];
+          if (req.secure) {
+            const { validate, ...opts } = global._block.config.passport;
+            args.push((req, res, next) => passport.authenticate('jwt', { session: false }, (e, d) => {
+              if (e) {
+                next(e);
+              } else if (!d) {
+                next(new Blocks.SBError("token is valid but no user found."));
+              } else {
+                req.jwtPayload = d;
+                next();
+              }
+            })(req, res, next));
           }
+          if (req.parameters) args.push(validate(req.parameters));
+          args.push(handlerException(req.originalMethod));
+          return router.route(`/${app.app}/${r.name}`)[req.method.toLowerCase()](...args);
         });
         return { ...r, reqs };
       });
