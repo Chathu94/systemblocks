@@ -95,7 +95,7 @@ export default class Controller {
               }
             })(req, res, next));
           }
-          if (req.parameters) args.push(validate(req.parameters));
+          if (req.parameters) args.push(validate({ body: req.parameters }));
           args.push(handlerException(req.originalMethod));
           return router.route(`/${app.app}/${r.name}`)[req.method.toLowerCase()](...args);
         });
